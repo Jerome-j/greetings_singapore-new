@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
         // TODO: Screenshot and share to Whatsapp
         appBar: AppBar(
-          title: Text("Good morning Singapore"),
+          title: Text("Good morning 🇸🇬"),
           actions: <Widget>[
             RaisedButton.icon(
               icon: Icon(
