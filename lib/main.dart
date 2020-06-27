@@ -1,4 +1,15 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_share_me/flutter_share_me.dart';
+
+import 'dart:convert';
+import 'package:flutter/rendering.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:singapore/database_init.dart';
 
 void main() => runApp(MaterialApp(home: Home()));
 
@@ -10,6 +21,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int counter = 0;
   String greeting_type = "早安";
+  File _imageFile;
 
   List images = [
     'https://www.dhresource.com/0x0/f2/albu/g4/M00/12/49/rBVaEFmVotuAXou9AAL3rP5jSuc531.jpg',
@@ -18,23 +30,60 @@ class _HomeState extends State<Home> {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT1eqwAt9m_uXAoQziN8un39wSycemRK5HYOQ&usqp=CAU'
   ];
 
+  //Create an instance of ScreenshotController
+  ScreenshotController screenshotController = ScreenshotController();
+
+  screenshot() {
+    _imageFile = null;
+    screenshotController
+        .capture(delay: Duration(milliseconds: 10))
+        .then((File image) async {
+      setState(() {
+        _imageFile = image;
+      });
+
+      Image img = Image.file(image);
+      List<int> imageBytes = image.readAsBytesSync();
+      String base64Image = base64.encode(imageBytes);
+
+      await FlutterShareMe().shareToWhatsApp(
+          base64Image: 'data:image/jpeg;base64,' + base64Image, msg: "Text");
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        // TODO: Screenshot and share to Whatsapp
         appBar: AppBar(
           title: Text("Good morning Singapore"),
+          leading: GestureDetector(
+            onTap: () {
+              screenshot();
+            },
+            child: Icon(
+              Icons.share, // add custom icons also
+            ),
+          ),
           backgroundColor: Colors.red,
         ),
         body: Column(
           children: <Widget>[
-            new Stack(
-              children: <Widget>[
-                Image.network(images[counter]),
-                Center(
-                    child: Text(greeting_type,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 40))),
-              ],
+            Screenshot(
+              controller: screenshotController,
+              child: new Stack(
+                children: <Widget>[
+                  Image.network(images[counter]),
+                  // TODO: Random font size and type -> safe area
+                  // TODO: Random Location
+                  Center(
+                      child: Text(greeting_type,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 40))),
+                ],
+              ),
             ),
             Text("Credits: Flickr"),
             RaisedButton(
@@ -52,6 +101,7 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
+                // TODO: Different text type for app -> 祝你有一个美丽的早晨 etc
                 RaisedButton(
                     onPressed: () {
                       setState(() {
@@ -74,7 +124,8 @@ class _HomeState extends State<Home> {
                     },
                     child: Text("晚")),
               ],
-            )
+            ),
+            _imageFile != null ? Image.file(_imageFile) : Container(),
           ],
         ));
   }
