@@ -1,15 +1,11 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
 
 import 'dart:convert';
 import 'package:flutter/rendering.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:singapore/database_init.dart';
 
 void main() => runApp(MaterialApp(home: Home()));
 
@@ -21,7 +17,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int counter = 0;
   String greeting_type = "早安";
-  File _imageFile;
 
   List images = [
     'https://www.dhresource.com/0x0/f2/albu/g4/M00/12/49/rBVaEFmVotuAXou9AAL3rP5jSuc531.jpg',
@@ -34,14 +29,9 @@ class _HomeState extends State<Home> {
   ScreenshotController screenshotController = ScreenshotController();
 
   screenshot() {
-    _imageFile = null;
     screenshotController
         .capture(delay: Duration(milliseconds: 10))
         .then((File image) async {
-      setState(() {
-        _imageFile = image;
-      });
-
       Image img = Image.file(image);
       List<int> imageBytes = image.readAsBytesSync();
       String base64Image = base64.encode(imageBytes);
@@ -59,14 +49,19 @@ class _HomeState extends State<Home> {
         // TODO: Screenshot and share to Whatsapp
         appBar: AppBar(
           title: Text("Good morning Singapore"),
-          leading: GestureDetector(
-            onTap: () {
-              screenshot();
-            },
-            child: Icon(
-              Icons.share, // add custom icons also
-            ),
-          ),
+          actions: <Widget>[
+            RaisedButton.icon(
+              icon: Icon(
+                Icons.share,
+                color: Colors.white,
+              ),
+              label: Text("WhatsApp"),
+              onPressed: () {
+                screenshot();
+              },
+              color: Colors.red,
+            )
+          ],
           backgroundColor: Colors.red,
         ),
         body: Column(
@@ -125,7 +120,6 @@ class _HomeState extends State<Home> {
                     child: Text("晚")),
               ],
             ),
-            _imageFile != null ? Image.file(_imageFile) : Container(),
           ],
         ));
   }
