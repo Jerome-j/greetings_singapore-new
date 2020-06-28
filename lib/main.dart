@@ -68,17 +68,7 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             Screenshot(
               controller: screenshotController,
-              child: new Stack(
-                children: <Widget>[
-                  Image.network(images[counter]),
-                  // TODO: Random font size and type -> safe area
-                  // TODO: Random Location
-                  Center(
-                      child: Text(greeting_type,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 40))),
-                ],
-              ),
+              child: _greetingText(greeting_type, images),
             ),
             Text("Credits: Flickr"),
             RaisedButton(
@@ -122,5 +112,18 @@ class _HomeState extends State<Home> {
             ),
           ],
         ));
+  }
+
+  Widget _greetingText(greeting_type, images) {
+    return Stack(
+      children: <Widget>[
+        Image.network(images[counter]),
+        // TODO: Random font size and type -> safe area
+        // TODO: Random Location
+        Center(
+            child: Text(greeting_type,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40))),
+      ],
+    );
   }
 }
