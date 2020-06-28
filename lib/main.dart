@@ -18,6 +18,8 @@ class _HomeState extends State<Home> {
   int counter = 0;
   String greeting_type = "早安";
 
+  double _x = 0, _y = 0;
+
   List images = [
     'https://www.dhresource.com/0x0/f2/albu/g4/M00/12/49/rBVaEFmVotuAXou9AAL3rP5jSuc531.jpg',
     'https://cdn.shopify.com/s/files/1/0151/0741/products/8308d18a3554e8371468333d04fb1e45_1024x1024.jpeg?v=1578638832',
@@ -116,14 +118,64 @@ class _HomeState extends State<Home> {
 
   Widget _greetingText(greeting_type, images) {
     return Stack(
+
       children: <Widget>[
         Image.network(images[counter]),
         // TODO: Random font size and type -> safe area
         // TODO: Random Location
-        Center(
-            child: Text(greeting_type,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40))),
+
+        Positioned(
+          left: _x,
+          top: _y,
+          child: Draggable(
+            data: GreetingTextFormatted(greetingText: greeting_type),
+            child: GreetingTextFormatted(greetingText: greeting_type),
+            feedback: GreetingTextFormatted(greetingText: greeting_type),
+            onDragEnd: (dragDetails) {
+              double appBarHeight = AppBar().preferredSize.height;
+              double statusBarHeight = MediaQuery.of(context).padding.top;
+
+              setState(() {
+                _x = dragDetails.offset.dx;
+                // if applicable, don't forget offsets like app/status bar
+                _y = dragDetails.offset.dy - appBarHeight - statusBarHeight;
+
+                print(" y is ");
+                print(_y);
+              });
+            },
+          ),
+        ),
+
+        Column(
+          children: <Widget>[
+//            Center(
+//                child: Text("愿一个问候带给你一个新的心情",
+//                    style: TextStyle(
+//                        fontWeight: FontWeight.bold,
+//                        fontSize: 40,
+//                        color: Colors.teal))),
+          ],
+        )
       ],
+    );
+  }
+}
+
+class GreetingTextFormatted extends StatelessWidget {
+  GreetingTextFormatted({Key key, this.greetingText}) : super(key: key);
+
+  final String greetingText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(10),
+          child: Text(greetingText,
+              style: TextStyle(color: Colors.red, fontSize: 60))),
     );
   }
 }
