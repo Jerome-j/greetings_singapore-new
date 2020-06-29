@@ -16,8 +16,9 @@ class Home extends StatefulWidget {
 class OtherInformation {
   double x_coor = 0;
   double y_coor = 0;
+  Color fontColor;
 
-  OtherInformation({this.x_coor, this.y_coor});
+  OtherInformation({this.x_coor, this.y_coor, this.fontColor});
 }
 
 class _HomeState extends State<Home> {
@@ -27,9 +28,10 @@ class _HomeState extends State<Home> {
   double _x = 0, _y = 0;
 
   Map choices = {
-    '早安': OtherInformation(x_coor: 0, y_coor: 0),
-    '愿你每天都健康开心!': OtherInformation(x_coor: 20, y_coor: 20),
-    '🍅': OtherInformation(x_coor: 40, y_coor: 40),
+    '早安': OtherInformation(x_coor: 0, y_coor: 0, fontColor: Colors.blue),
+    '愿你每天都健康开心!':
+        OtherInformation(x_coor: 20, y_coor: 20, fontColor: Colors.yellow),
+    '🍅': OtherInformation(x_coor: 40, y_coor: 40, fontColor: Colors.green),
   };
 
   List images = [
@@ -60,7 +62,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // TODO: Screenshot and share to Whatsapp
         appBar: AppBar(
           title: Text("Good morning 🇸🇬"),
           actions: <Widget>[
@@ -105,14 +106,20 @@ class _HomeState extends State<Home> {
                         // TODO: Looping a map
                         children: choices.keys.map((emoji) {
                           OtherInformation otherInformation = choices[emoji];
+
+                          GreetingTextFormatted greetingTextFormatted =
+                          new GreetingTextFormatted(
+                            greetingText: emoji,
+                            fontColor: otherInformation.fontColor,
+                          );
+
                           return Positioned(
                             left: otherInformation.x_coor,
                             top: otherInformation.y_coor,
                             child: Draggable(
-                              data: GreetingTextFormatted(greetingText: emoji),
-                              child: GreetingTextFormatted(greetingText: emoji),
-                              feedback:
-                              GreetingTextFormatted(greetingText: emoji),
+                              data: greetingTextFormatted,
+                              child: greetingTextFormatted,
+                              feedback: greetingTextFormatted,
                               onDragEnd: (dragDetails) {
                                 double appBarHeight =
                                     AppBar().preferredSize.height;
@@ -196,10 +203,11 @@ class _HomeState extends State<Home> {
   }
 }
 
-
 class GreetingTextFormatted extends StatelessWidget {
-  GreetingTextFormatted({Key key, this.greetingText}) : super(key: key);
+  GreetingTextFormatted({Key key, this.greetingText, this.fontColor})
+      : super(key: key);
 
+  final Color fontColor;
   final String greetingText;
 
   @override
@@ -210,7 +218,8 @@ class GreetingTextFormatted extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.all(10),
           child: Text(greetingText,
-              style: TextStyle(color: Colors.red, fontSize: 60))),
+              style: TextStyle(
+                  color: fontColor, fontSize: 60, fontFamily: 'Arial'))),
     );
   }
 }
