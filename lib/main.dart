@@ -17,21 +17,41 @@ class OtherInformation {
   double x_coor = 0;
   double y_coor = 0;
   Color fontColor;
+  double fontSize;
+  String greetingText;
 
-  OtherInformation({this.x_coor, this.y_coor, this.fontColor});
+  OtherInformation(
+      {this.x_coor,
+      this.y_coor,
+      this.fontColor,
+      this.fontSize,
+      this.greetingText});
 }
 
 class _HomeState extends State<Home> {
   int counter = 0;
   String greeting_type = "早安";
 
-  double _x = 0, _y = 0;
 
   Map choices = {
-    '早安': OtherInformation(x_coor: 0, y_coor: 0, fontColor: Colors.blue),
-    '愿你每天都健康开心!':
-        OtherInformation(x_coor: 20, y_coor: 20, fontColor: Colors.yellow),
-    '🍅': OtherInformation(x_coor: 40, y_coor: 40, fontColor: Colors.green),
+    '0': OtherInformation(
+        x_coor: 0,
+        y_coor: 0,
+        fontColor: Colors.blue,
+        fontSize: 30,
+        greetingText: "早安 1"),
+    '1': OtherInformation(
+        x_coor: 20,
+        y_coor: 20,
+        fontColor: Colors.yellow,
+        fontSize: 40,
+        greetingText: '愿你每天都健康开心!1'),
+    '2': OtherInformation(
+        x_coor: 40,
+        y_coor: 40,
+        fontColor: Colors.green,
+        fontSize: 60,
+        greetingText: '🍅1'),
   };
 
   List images = [
@@ -103,8 +123,9 @@ class _HomeState extends State<Home> {
 
                           GreetingTextFormatted greetingTextFormatted =
                               new GreetingTextFormatted(
-                            greetingText: emoji,
-                            fontColor: otherInformation.fontColor,
+                                greetingText: otherInformation.greetingText,
+                                fontColor: otherInformation.fontColor,
+                                fontSize: otherInformation.fontSize,
                           );
 
                           return Positioned(
@@ -116,11 +137,19 @@ class _HomeState extends State<Home> {
                                 // set up the AlertDialog
                                 AlertDialog alert = AlertDialog(
                                   //https://stackoverflow.com/questions/60163123/flutter-detect-tap-on-the-screen-that-is-filled-with-other-widgets
-                                  title: Text(emoji),
-                                  content: Text("This is my message."),
-//                                  actions: [
-//                                    okButton,
-//                                  ],
+                                    title: Text('更改文字和设计'),
+                                    content:
+
+                                    TextFormField(
+                                        initialValue: otherInformation
+                                            .greetingText,
+                                        style: TextStyle(
+                                            color: otherInformation.fontColor,
+                                            fontSize: otherInformation.fontSize
+                                        )
+                                    )
+
+
                                 );
 
                                 // show the dialog
@@ -194,21 +223,27 @@ class _HomeState extends State<Home> {
                   RaisedButton(
                       onPressed: () {
                         setState(() {
-                          greeting_type = "早安";
+                          OtherInformation a = choices["0"];
+                          a.greetingText = "早安";
+                          choices["0"] = a;
                         });
                       },
                       child: Text("早")),
                   RaisedButton(
                       onPressed: () {
                         setState(() {
-                          greeting_type = "午安";
+                          OtherInformation a = choices["0"];
+                          a.greetingText = "午安";
+                          choices["0"] = a;
                         });
                       },
                       child: Text("午")),
                   RaisedButton(
                       onPressed: () {
                         setState(() {
-                          greeting_type = "晚安";
+                          OtherInformation a = choices["0"];
+                          a.greetingText = "晚安";
+                          choices["0"] = a;
                         });
                       },
                       child: Text("晚")),
@@ -221,11 +256,13 @@ class _HomeState extends State<Home> {
 }
 
 class GreetingTextFormatted extends StatelessWidget {
-  GreetingTextFormatted({Key key, this.greetingText, this.fontColor})
+  GreetingTextFormatted(
+      {Key key, this.greetingText, this.fontColor, this.fontSize})
       : super(key: key);
 
   final Color fontColor;
   final String greetingText;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +273,7 @@ class GreetingTextFormatted extends StatelessWidget {
           padding: EdgeInsets.all(10),
           child: Text(greetingText,
               style: TextStyle(
-                  color: fontColor, fontSize: 60, fontFamily: 'Arial'))),
+                  color: fontColor, fontSize: fontSize, fontFamily: 'Arial'))),
     );
   }
 }
