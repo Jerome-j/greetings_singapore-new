@@ -32,7 +32,6 @@ class _HomeState extends State<Home> {
   int counter = 0;
   String greeting_type = "早安";
 
-
   Map choices = {
     '0': OtherInformation(
         x_coor: 0,
@@ -81,6 +80,15 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController myController = TextEditingController();
+
+    @override
+    void dispose() {
+      // Clean up the controller when the widget is disposed.
+      myController.dispose();
+      super.dispose();
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Good morning 🇸🇬"),
@@ -121,11 +129,13 @@ class _HomeState extends State<Home> {
                         children: choices.keys.map((emoji) {
                           OtherInformation otherInformation = choices[emoji];
 
+                          myController.text = otherInformation.greetingText;
+
                           GreetingTextFormatted greetingTextFormatted =
                               new GreetingTextFormatted(
-                                greetingText: otherInformation.greetingText,
-                                fontColor: otherInformation.fontColor,
-                                fontSize: otherInformation.fontSize,
+                            greetingText: otherInformation.greetingText,
+                            fontColor: otherInformation.fontColor,
+                            fontSize: otherInformation.fontSize,
                           );
 
                           return Positioned(
@@ -136,21 +146,67 @@ class _HomeState extends State<Home> {
                                 print("tapped" + emoji);
                                 // set up the AlertDialog
                                 AlertDialog alert = AlertDialog(
-                                  //https://stackoverflow.com/questions/60163123/flutter-detect-tap-on-the-screen-that-is-filled-with-other-widgets
-                                    title: Text('更改文字和设计'),
-                                    content:
-
-                                    TextFormField(
-                                        initialValue: otherInformation
-                                            .greetingText,
-                                        style: TextStyle(
-                                            color: otherInformation.fontColor,
-                                            fontSize: otherInformation.fontSize
+                                  // https://stackoverflow.com/questions/60163123/flutter-detect-tap-on-the-screen-that-is-filled-with-other-widgets
+                                    title: Row(
+                                      children: <Widget>[
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: IconButton(
+                                            icon: Icon(Icons.close),
+                                            iconSize: 10,
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Align(
+                                          child: Text('更改文字和设计'),
+                                          alignment: Alignment.topLeft,
+                                        ),
+                                      ],
+                                    ),
+                                    content: Column(
+                                      children: <Widget>[
+                                        TextFormField(
+                                            controller: myController,
+//                                            initialValue:
+//                                                otherInformation.greetingText,
+                                            style: TextStyle(
+                                                color:
+                                                otherInformation.fontColor,
+                                                fontSize:
+                                                otherInformation.fontSize)),
+                                        Row(
+                                          children: <Widget>[
+                                            RaisedButton(
+                                              child: Text("删除"),
+                                              color: Colors.red,
+                                              onPressed: () {
+                                                setState(() {
+                                                  choices.remove(emoji);
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            RaisedButton(
+                                              child: Text("更改"),
+                                              color: Colors.green,
+                                              onPressed: () {
+                                                setState(() {
+                                                  OtherInformation a =
+                                                  choices[emoji];
+                                                  a.greetingText = myController
+                                                      .text
+                                                      .toString();
+                                                  choices[emoji] = a;
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                            )
+                                          ],
                                         )
-                                    )
-
-
-                                );
+                                      ],
+                                    ));
 
                                 // show the dialog
                                 showDialog(
