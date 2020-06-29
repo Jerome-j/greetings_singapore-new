@@ -113,6 +113,23 @@ class _HomeState extends State<Home> {
                             child: GestureDetector(
                               onTap: () {
                                 print("tapped" + emoji);
+                                // set up the AlertDialog
+                                AlertDialog alert = AlertDialog(
+                                  //https://stackoverflow.com/questions/60163123/flutter-detect-tap-on-the-screen-that-is-filled-with-other-widgets
+                                  title: Text(emoji),
+                                  content: Text("This is my message."),
+//                                  actions: [
+//                                    okButton,
+//                                  ],
+                                );
+
+                                // show the dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return alert;
+                                  },
+                                );
                               },
                               child: Draggable(
                                 data: greetingTextFormatted,
