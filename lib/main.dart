@@ -1,10 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_share_me/flutter_share_me.dart';
-
-import 'dart:convert';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_share_me/flutter_share_me.dart';
 import 'package:screenshot/screenshot.dart';
 
 void main() => runApp(MaterialApp(home: Home()));
@@ -48,7 +47,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // TODO: Screenshot and share to Whatsapp
+      // TODO: Screenshot and share to Whatsapp
         appBar: AppBar(
           title: Text("Good morning 🇸🇬"),
           actions: <Widget>[
@@ -117,34 +116,47 @@ class _HomeState extends State<Home> {
   }
 
   Widget _greetingText(greeting_type, images) {
-    return Stack(
+    final Map choices = {
+      '🍏': Colors.green,
+      '🍋': Colors.yellow,
+      '🍅': Colors.red,
+    };
+    final Map<String, bool> score = {};
 
+    return Stack(
       children: <Widget>[
         Image.network(images[counter]),
         // TODO: Random font size and type -> safe area
         // TODO: Random Location
 
-        Positioned(
-          left: _x,
-          top: _y,
-          child: Draggable(
-            data: GreetingTextFormatted(greetingText: greeting_type),
-            child: GreetingTextFormatted(greetingText: greeting_type),
-            feedback: GreetingTextFormatted(greetingText: greeting_type),
-            onDragEnd: (dragDetails) {
-              double appBarHeight = AppBar().preferredSize.height;
-              double statusBarHeight = MediaQuery.of(context).padding.top;
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          // TODO: Looping a map
+          children: choices.keys.map((emoji) {
+            return Positioned(
+              left: _x,
+              top: _y,
+              child: Draggable(
+                data: GreetingTextFormatted(greetingText: greeting_type),
+                child: GreetingTextFormatted(greetingText: greeting_type),
+                feedback: GreetingTextFormatted(greetingText: greeting_type),
+                onDragEnd: (dragDetails) {
+                  double appBarHeight = AppBar().preferredSize.height;
+                  double statusBarHeight = MediaQuery.of(context).padding.top;
 
-              setState(() {
-                _x = dragDetails.offset.dx;
-                // if applicable, don't forget offsets like app/status bar
-                _y = dragDetails.offset.dy - appBarHeight - statusBarHeight;
+                  setState(() {
+                    _x = dragDetails.offset.dx;
+                    // if applicable, don't forget offsets like app/status bar
+                    _y = dragDetails.offset.dy - appBarHeight - statusBarHeight;
 
-                print(" y is ");
-                print(_y);
-              });
-            },
-          ),
+                    print(" y is ");
+                    print(_y);
+                  });
+                },
+              ),
+            );
+          }).toList(),
         ),
 
         Column(
@@ -158,6 +170,25 @@ class _HomeState extends State<Home> {
           ],
         )
       ],
+    );
+  }
+}
+
+class Emoji extends StatelessWidget {
+  Emoji({Key key, this.emoji}) : super(key: key);
+
+  final String emoji;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+          alignment: Alignment.center,
+          height: 50,
+          padding: EdgeInsets.all(10),
+          child:
+          Text(emoji, style: TextStyle(color: Colors.black, fontSize: 30))),
     );
   }
 }
