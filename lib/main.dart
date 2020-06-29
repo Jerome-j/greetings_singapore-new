@@ -33,19 +33,19 @@ class _HomeState extends State<Home> {
   String greeting_type = "早安";
 
   Map choices = {
-    '0': OtherInformation(
+    0: OtherInformation(
         x_coor: 0,
         y_coor: 0,
         fontColor: Colors.blue,
         fontSize: 30,
         greetingText: "早安 1"),
-    '1': OtherInformation(
+    1: OtherInformation(
         x_coor: 20,
         y_coor: 20,
         fontColor: Colors.yellow,
         fontSize: 40,
         greetingText: '愿你每天都健康开心!1'),
-    '2': OtherInformation(
+    2: OtherInformation(
         x_coor: 40,
         y_coor: 40,
         fontColor: Colors.green,
@@ -143,10 +143,10 @@ class _HomeState extends State<Home> {
                             top: otherInformation.y_coor,
                             child: GestureDetector(
                               onTap: () {
-                                print("tapped" + emoji);
+                                print("tapped" + emoji.toString());
                                 // set up the AlertDialog
                                 AlertDialog alert = AlertDialog(
-                                  // https://stackoverflow.com/questions/60163123/flutter-detect-tap-on-the-screen-that-is-filled-with-other-widgets
+                                    // https://stackoverflow.com/questions/60163123/flutter-detect-tap-on-the-screen-that-is-filled-with-other-widgets
                                     title: Row(
                                       children: <Widget>[
                                         Align(
@@ -279,27 +279,27 @@ class _HomeState extends State<Home> {
                   RaisedButton(
                       onPressed: () {
                         setState(() {
-                          OtherInformation a = choices["0"];
+                          OtherInformation a = choices[0];
                           a.greetingText = "早安";
-                          choices["0"] = a;
+                          choices[0] = a;
                         });
                       },
                       child: Text("早")),
                   RaisedButton(
                       onPressed: () {
                         setState(() {
-                          OtherInformation a = choices["0"];
+                          OtherInformation a = choices[0];
                           a.greetingText = "午安";
-                          choices["0"] = a;
+                          choices[0] = a;
                         });
                       },
                       child: Text("午")),
                   RaisedButton(
                       onPressed: () {
                         setState(() {
-                          OtherInformation a = choices["0"];
+                          OtherInformation a = choices[0];
                           a.greetingText = "晚安";
-                          choices["0"] = a;
+                          choices[0] = a;
                         });
                       },
                       child: Text("晚")),
