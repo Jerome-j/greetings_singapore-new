@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: Screenshot and share to Whatsapp
+        // TODO: Screenshot and share to Whatsapp
         appBar: AppBar(
           title: Text("Good morning 🇸🇬"),
           actions: <Widget>[
@@ -72,53 +72,55 @@ class _HomeState extends State<Home> {
           ],
           backgroundColor: Colors.red,
         ),
-        body: Column(
-          children: <Widget>[
-            Screenshot(
-              controller: screenshotController,
-              child: _greetingText(greeting_type, images),
-            ),
-            Text("Credits: Flickr"),
-            RaisedButton(
-              onPressed: () {
-                setState(() {
-                  if (counter > counter.bitLength)
-                    counter = 0;
-                  else
-                    counter++;
-                });
-              },
-              child: Text("Change image"),
-            ),
-            SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                // TODO: Different text type for app -> 祝你有一个美丽的早晨 etc
-                RaisedButton(
-                    onPressed: () {
-                      setState(() {
-                        greeting_type = "早安";
-                      });
-                    },
-                    child: Text("早")),
-                RaisedButton(
-                    onPressed: () {
-                      setState(() {
-                        greeting_type = "午安";
-                      });
-                    },
-                    child: Text("午")),
-                RaisedButton(
-                    onPressed: () {
-                      setState(() {
-                        greeting_type = "晚安";
-                      });
-                    },
-                    child: Text("晚")),
-              ],
-            ),
-          ],
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              Screenshot(
+                controller: screenshotController,
+                child: _greetingText(greeting_type, images),
+              ),
+              Text("Credits: Flickr"),
+              RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    if (counter > counter.bitLength)
+                      counter = 0;
+                    else
+                      counter++;
+                  });
+                },
+                child: Text("Change image"),
+              ),
+              SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  // TODO: Different text type for app -> 祝你有一个美丽的早晨 etc
+                  RaisedButton(
+                      onPressed: () {
+                        setState(() {
+                          greeting_type = "早安";
+                        });
+                      },
+                      child: Text("早")),
+                  RaisedButton(
+                      onPressed: () {
+                        setState(() {
+                          greeting_type = "午安";
+                        });
+                      },
+                      child: Text("午")),
+                  RaisedButton(
+                      onPressed: () {
+                        setState(() {
+                          greeting_type = "晚安";
+                        });
+                      },
+                      child: Text("晚")),
+                ],
+              ),
+            ],
+          ),
         ));
   }
 
@@ -133,57 +135,48 @@ class _HomeState extends State<Home> {
 
     return Stack(
       children: <Widget>[
-        Image.network(images[counter]),
+        Container(
+            child: Image.network(images[counter]),
+            // TODO: Temporary fit the height of image to width, need to implement more logic to check if length and heights are equal etc
+            height: MediaQuery.of(context).size.width),
         // TODO: Random font size and type -> safe area
         // TODO: Random Location
 
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          // TODO: Looping a map
-          children: choices.keys.map((emoji) {
-            OtherInformation otherInformation = choices[emoji];
-            return Positioned(
-              left: otherInformation.x_coor,
-              top: otherInformation.y_coor,
-              child: Draggable(
-                data: GreetingTextFormatted(greetingText: emoji),
-                child: GreetingTextFormatted(greetingText: emoji),
-                feedback: GreetingTextFormatted(greetingText: emoji),
-                onDragEnd: (dragDetails) {
-                  double appBarHeight = AppBar().preferredSize.height;
-                  double statusBarHeight = MediaQuery
-                      .of(context)
-                      .padding
-                      .top;
+        Container(
+          // TODO: Temporary fit the height of image to width, need to implement more logic to check if length and heights are equal etc
+          height: MediaQuery.of(context).size.width,
+          child: Stack(
+            // TODO: Looping a map
+            children: choices.keys.map((emoji) {
+              OtherInformation otherInformation = choices[emoji];
+              return Positioned(
+                left: otherInformation.x_coor,
+                top: otherInformation.y_coor,
+                child: Draggable(
+                  data: GreetingTextFormatted(greetingText: emoji),
+                  child: GreetingTextFormatted(greetingText: emoji),
+                  feedback: GreetingTextFormatted(greetingText: emoji),
+                  onDragEnd: (dragDetails) {
+                    double appBarHeight = AppBar().preferredSize.height;
+                    double statusBarHeight = MediaQuery.of(context).padding.top;
 
-                  setState(() {
-                    otherInformation.x_coor = dragDetails.offset.dx;
-                    // if applicable, don't forget offsets like app/status bar
-                    otherInformation.y_coor =
-                        dragDetails.offset.dy - appBarHeight - statusBarHeight;
+                    setState(() {
+                      otherInformation.x_coor = dragDetails.offset.dx;
+                      // if applicable, don't forget offsets like app/status bar
+                      otherInformation.y_coor = dragDetails.offset.dy -
+                          appBarHeight -
+                          statusBarHeight;
 
+                      choices[emoji] = otherInformation;
 
-                    choices[emoji] = otherInformation;
-
-                    print(choices);
-                  });
-                },
-              ),
-            );
-          }).toList(),
+                      print(choices);
+                    });
+                  },
+                ),
+              );
+            }).toList(),
+          ),
         ),
-
-        Column(
-          children: <Widget>[
-//            Center(
-//                child: Text("愿一个问候带给你一个新的心情",
-//                    style: TextStyle(
-//                        fontWeight: FontWeight.bold,
-//                        fontSize: 40,
-//                        color: Colors.teal))),
-          ],
-        )
       ],
     );
   }
