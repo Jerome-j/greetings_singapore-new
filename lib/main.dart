@@ -89,26 +89,20 @@ class _HomeState extends State<Home> {
                     Container(
                         child: Image.network(images[counter]),
                         // TODO: Temporary fit the height of image to width, need to implement more logic to check if length and heights are equal etc
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .width),
+                        height: MediaQuery.of(context).size.width),
                     // TODO: Random font size and type -> safe area
                     // TODO: Random Location
 
                     Container(
                       // TODO: Temporary fit the height of image to width, need to implement more logic to check if length and heights are equal etc
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
+                      height: MediaQuery.of(context).size.width,
                       child: Stack(
                         // TODO: Looping a map
                         children: choices.keys.map((emoji) {
                           OtherInformation otherInformation = choices[emoji];
 
                           GreetingTextFormatted greetingTextFormatted =
-                          new GreetingTextFormatted(
+                              new GreetingTextFormatted(
                             greetingText: emoji,
                             fontColor: otherInformation.fontColor,
                           );
@@ -116,39 +110,45 @@ class _HomeState extends State<Home> {
                           return Positioned(
                             left: otherInformation.x_coor,
                             top: otherInformation.y_coor,
-                            child: Draggable(
-                              data: greetingTextFormatted,
-                              child: greetingTextFormatted,
-                              feedback: greetingTextFormatted,
-                              onDragEnd: (dragDetails) {
-                                double appBarHeight =
-                                    AppBar().preferredSize.height;
-                                double statusBarHeight =
-                                    MediaQuery
-                                        .of(context)
-                                        .padding
-                                        .top;
+                            child: GestureDetector(
+                              onTap: () {
+                                print("tapped" + emoji);
+                              },
+                              child: Draggable(
+                                data: greetingTextFormatted,
+                                child: greetingTextFormatted,
+                                feedback: greetingTextFormatted,
+                                onDragEnd: (dragDetails) {
+                                  double appBarHeight =
+                                      AppBar().preferredSize.height;
+                                  double statusBarHeight =
+                                      MediaQuery
+                                          .of(context)
+                                          .padding
+                                          .top;
 
-                                otherInformation.x_coor = dragDetails.offset.dx;
-                                // if applicable, don't forget offsets like app/status bar
-                                otherInformation.y_coor =
-                                    dragDetails.offset.dy -
-                                        appBarHeight -
-                                        statusBarHeight;
+                                  otherInformation.x_coor =
+                                      dragDetails.offset.dx;
+                                  // if applicable, don't forget offsets like app/status bar
+                                  otherInformation.y_coor =
+                                      dragDetails.offset.dy -
+                                          appBarHeight -
+                                          statusBarHeight;
 
-                                setState(() {
+                                  setState(() {
 //                                  choices[emoji] = otherInformation;
 
-                                  choices.update(emoji, (oldValue) {
-                                    print(oldValue.x_coor.toString() +
-                                        " ___ " +
-                                        otherInformation.x_coor.toString());
-                                    return otherInformation;
-                                  });
+                                    choices.update(emoji, (oldValue) {
+                                      print(oldValue.x_coor.toString() +
+                                          " ___ " +
+                                          otherInformation.x_coor.toString());
+                                      return otherInformation;
+                                    });
 
-                                  print(choices[emoji].x_coor);
-                                });
-                              },
+                                    print(choices[emoji].x_coor);
+                                  });
+                                },
+                              ),
                             ),
                           );
                         }).toList(),
