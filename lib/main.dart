@@ -13,6 +13,13 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
+class OtherInformation {
+  double x_coor = 0;
+  double y_coor = 0;
+
+  OtherInformation({this.x_coor, this.y_coor});
+}
+
 class _HomeState extends State<Home> {
   int counter = 0;
   String greeting_type = "早安";
@@ -116,11 +123,12 @@ class _HomeState extends State<Home> {
   }
 
   Widget _greetingText(greeting_type, images) {
-    final Map choices = {
-      '🍏': Colors.green,
-      '🍋': Colors.yellow,
-      '🍅': Colors.red,
+    Map choices = {
+      greeting_type: OtherInformation(x_coor: 0, y_coor: 0),
+      '🍋': OtherInformation(x_coor: 20, y_coor: 20),
+      '🍅': OtherInformation(x_coor: 40, y_coor: 40),
     };
+
     final Map<String, bool> score = {};
 
     return Stack(
@@ -134,24 +142,31 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.end,
           // TODO: Looping a map
           children: choices.keys.map((emoji) {
+            OtherInformation otherInformation = choices[emoji];
             return Positioned(
-              left: _x,
-              top: _y,
+              left: otherInformation.x_coor,
+              top: otherInformation.y_coor,
               child: Draggable(
-                data: GreetingTextFormatted(greetingText: greeting_type),
-                child: GreetingTextFormatted(greetingText: greeting_type),
-                feedback: GreetingTextFormatted(greetingText: greeting_type),
+                data: GreetingTextFormatted(greetingText: emoji),
+                child: GreetingTextFormatted(greetingText: emoji),
+                feedback: GreetingTextFormatted(greetingText: emoji),
                 onDragEnd: (dragDetails) {
                   double appBarHeight = AppBar().preferredSize.height;
-                  double statusBarHeight = MediaQuery.of(context).padding.top;
+                  double statusBarHeight = MediaQuery
+                      .of(context)
+                      .padding
+                      .top;
 
                   setState(() {
-                    _x = dragDetails.offset.dx;
+                    otherInformation.x_coor = dragDetails.offset.dx;
                     // if applicable, don't forget offsets like app/status bar
-                    _y = dragDetails.offset.dy - appBarHeight - statusBarHeight;
+                    otherInformation.y_coor =
+                        dragDetails.offset.dy - appBarHeight - statusBarHeight;
 
-                    print(" y is ");
-                    print(_y);
+
+                    choices[emoji] = otherInformation;
+
+                    print(choices);
                   });
                 },
               ),
