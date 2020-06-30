@@ -32,6 +32,22 @@ class _HomeState extends State<Home> {
   int counter = 0;
   String greeting_type = "早安";
 
+  final int _fields = 10;
+
+  List<TextEditingController> controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    controllers = List.generate(_fields, (i) => TextEditingController());
+  }
+
+  @override
+  void dispose() {
+    controllers.forEach((c) => c.dispose());
+    super.dispose();
+  }
+
   Map choices = {
     0: OtherInformation(
         x_coor: 0,
@@ -129,7 +145,12 @@ class _HomeState extends State<Home> {
                         children: choices.keys.map((emoji) {
                           OtherInformation otherInformation = choices[emoji];
 
-                          myController.text = otherInformation.greetingText;
+                          controllers[emoji].text =
+                              otherInformation.greetingText;
+
+                          controllers[emoji].selection =
+                              TextSelection.collapsed(
+                                  offset: otherInformation.greetingText.length);
 
                           GreetingTextFormatted greetingTextFormatted =
                               new GreetingTextFormatted(
@@ -168,7 +189,8 @@ class _HomeState extends State<Home> {
                                     content: Column(
                                       children: <Widget>[
                                         TextFormField(
-                                            controller: myController,
+                                            keyboardType: TextInputType.text,
+                                            controller: controllers[emoji],
 //                                            initialValue:
 //                                                otherInformation.greetingText,
                                             style: TextStyle(
@@ -193,12 +215,22 @@ class _HomeState extends State<Home> {
                                               color: Colors.green,
                                               onPressed: () {
                                                 setState(() {
-                                                  OtherInformation a =
-                                                  choices[emoji];
-                                                  a.greetingText = myController
+                                                  if (controllers[emoji]
                                                       .text
-                                                      .toString();
-                                                  choices[emoji] = a;
+                                                      .toString()
+                                                      .isNotEmpty) {
+                                                    OtherInformation a =
+                                                    choices[emoji];
+                                                    a.greetingText =
+                                                        controllers[emoji]
+                                                            .text
+                                                            .toString();
+                                                    choices[emoji] = a;
+                                                  } else {
+                                                    setState(() {
+                                                      choices.remove(emoji);
+                                                    });
+                                                  }
                                                 });
                                                 Navigator.pop(context);
                                               },
